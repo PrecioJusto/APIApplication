@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -46,4 +47,7 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserImage userImage;
+
+    @OneToMany(mappedBy="user")
+    private Set<ShoppingCart> shoppingCarts;
 }
