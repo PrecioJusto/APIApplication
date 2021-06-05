@@ -2,6 +2,7 @@ package app.preciojusto.application.controllers;
 
 import app.preciojusto.application.dto.LoginRequestDTO;
 import app.preciojusto.application.dto.LoginResponseDTO;
+import app.preciojusto.application.dto.ProductResponseDTO;
 import app.preciojusto.application.dto.UserRequestDTO;
 import app.preciojusto.application.entities.User;
 import app.preciojusto.application.exceptions.*;
@@ -25,7 +26,7 @@ public class UserController {
     TokenService tokenService;
 
 
-    @GetMapping("/getprofile")
+    @GetMapping("/profile")
     public User getProfile(@RequestAttribute Map<String, Claim> user) throws ResourceNotFoundException {
         String email = user.get("useremail").asString();
         return this.userService.findUserByEmail(email)
@@ -52,7 +53,7 @@ public class UserController {
         return this.userService.loginUser(userToLogin);
     }
 
-    @PutMapping("/editprofile")
+    @PutMapping("/profile")
     public User putUpdateUser(@RequestBody UserRequestDTO request, @RequestAttribute Map<String, Claim> user) throws InvalidKeySpecException, NoSuchAlgorithmException, ResourceNotFoundException {
 
         if (!user.get("userid").asLong().equals(request.getUserid()))
@@ -63,7 +64,7 @@ public class UserController {
             throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
 
         //Validate data before update the user
-        this.userService.checkRegister(request);
+        this.userService.checkUpdateProfile(request, user.get("useremail").asString());
         return this.userService.updateUser(request);
     }
 }

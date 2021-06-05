@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -48,6 +50,10 @@ public class User {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserImage userImage;
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy = "user")
     private Set<ShoppingCart> shoppingCarts;
+
+    @ManyToMany(mappedBy = "users")
+    @JsonIgnore
+    private Set<Product> products;
 }

@@ -155,8 +155,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void checkUpdateProfile(UserRequestDTO request) {
+    public void checkUpdateProfile(UserRequestDTO request, String emailAuth) {
 
+        String requestedEmail = "";
+        Optional<User> requestedUser = this.userRepository.findUserByUseremailEquals(request.getUseremail());
+        if (requestedUser.isPresent()) {
+            requestedEmail = requestedUser.get().getUseremail();
+        }
+
+        if (!this.isEmailValid(request.getUseremail()))
+            throw new ValidationException(ApplicationExceptionCode.EMAIL_VALIDATION_ERROR);
+        if (this.userRepository.findUserByUseremailEquals(request.getUseremail()).isPresent() && !requestedEmail.equals(emailAuth))
+            throw new ValidationException(ApplicationExceptionCode.EMAILEXISTS_VALIDATION_ERROR);
+        if (!this.isUsernameValid(request.getUsername()))
+            throw new ValidationException(ApplicationExceptionCode.USER_VALIDATION_ERROR);
+        if (!this.isPhoneNumberValid(request.getUserphonenumber()))
+            throw new ValidationException(ApplicationExceptionCode.PHONENUMBER_VALIDATION_ERROR);
+        if (!this.isPasswordValid(request.getUserpass()))
+            throw new ValidationException(ApplicationExceptionCode.PASSWORD_VALIDATION_ERROR);
+        if (!request.getUserpass().equals(request.getRepeatuserpass()))
+            throw new ValidationException(ApplicationExceptionCode.SAMEPASSWORD_VALIDATION_ERROR);
     }
 
 
