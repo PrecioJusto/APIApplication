@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -32,5 +33,9 @@ public class ShoppingCart {
     @JoinColumn(name="userid", nullable=false)
     @JsonIgnore
     private User user;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    Set<ShoppingCartProduct> shoppingCartProducts;
 
 }

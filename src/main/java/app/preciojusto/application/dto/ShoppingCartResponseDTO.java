@@ -1,20 +1,20 @@
 package app.preciojusto.application.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import app.preciojusto.application.entities.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class ShoppingCartRequestDTO {
-
+public class ShoppingCartResponseDTO {
     private Long shopid;
     private String shopname;
-    private Long userid;
-
+    private LocalDateTime shopcreationdate;
+    private List<ProductResponseDTO> products;
+    private User user;
 }

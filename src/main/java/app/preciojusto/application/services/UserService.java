@@ -18,5 +18,5 @@ public interface UserService {
     User updateUser(UserRequestDTO user) throws ResourceNotFoundException, InvalidKeySpecException, NoSuchAlgorithmException;
     User disableUser(UserRequestDTO user) throws ResourceNotFoundException;
     void checkRegister(UserRequestDTO request) throws ResourceNotFoundException;
-    void checkUpdateProfile(UserRequestDTO request);
+    void checkUpdateProfile(UserRequestDTO request, String emailAuth);
 }

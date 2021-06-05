@@ -15,6 +15,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/getprofile", "/editprofile", "/shoppingcart/*/user", "/shoppingcart/*/get", "/shoppingcart/add", "/shoppingcart/update", "/shoppingcart/*/delete");
+                .addPathPatterns("/getprofile", "/editprofile",
+                        "/shoppingcart/*/user", "/shoppingcart/*/get", "/shoppingcart/add", "/shoppingcart/update", "/shoppingcart/*/delete",
+                        "/shoppingcartproduct/*/*/get", "/shoppingcartproduct/add", "/shoppingcartproduct/update", "/shoppingcartproduct/*/*/delete",
+                        "/product/favourite", "/product/*/*/deletefavourite", "/getfavourite");
     }
 }
