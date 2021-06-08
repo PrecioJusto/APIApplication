@@ -8,6 +8,7 @@ import app.preciojusto.application.exceptions.ResourceNotFoundException;
 import app.preciojusto.application.repositories.UserImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +44,7 @@ public class UserImageServiceImpl implements UserImageService{
         return this.userImageRepository.findById(userImageId);
     }
 
+    @Transactional
     @Override
     public Boolean delete(Long userImageId) {
         try {
@@ -54,6 +56,7 @@ public class UserImageServiceImpl implements UserImageService{
         }
     }
 
+    @Transactional
     @Override
     public UserImage save(UserImage request) throws ResourceNotFoundException {
         UserImage userImage;

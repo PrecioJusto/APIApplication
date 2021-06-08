@@ -19,7 +19,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins(environment.getProperty("cors.allowed"))
+                .allowedOrigins("https://preciojusto.app")
                 .allowedMethods("PUT", "POST", "GET", "DELETE", "OPTIONS");
     }
 }

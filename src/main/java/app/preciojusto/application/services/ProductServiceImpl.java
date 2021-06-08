@@ -10,6 +10,7 @@ import app.preciojusto.application.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.spel.ast.OpInc;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -27,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ConnectionService connectionService;
 
+    @Transactional
     @Override
     public Product addAsFavourite(ProductRequestDTO request) {
         Product product;
@@ -53,6 +55,7 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+    @Transactional
     @Override
     public Boolean deleteFavourite(Long userid, Long prodid) {
         Product product = this.productRepository.findById(prodid)
@@ -93,6 +96,7 @@ public class ProductServiceImpl implements ProductService {
         return null;
     }
 
+    @Transactional
     @Override
     public Product save(Product product) {
         return this.productRepository.save(product);

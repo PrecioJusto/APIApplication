@@ -14,6 +14,7 @@ import app.preciojusto.application.exceptions.UnauthorizedException;
 import app.preciojusto.application.repositories.ShoppingCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,6 +69,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return this.shoppingCartRepository.findShoppingCartsByUser_Userid(userid);
     }
 
+    @Transactional
     @Override
     public ShoppingCart saveShoppingCart(ShoppingCartRequestDTO request) throws ResourceNotFoundException {
         final ShoppingCart shoppingCart;
@@ -95,6 +97,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
     }
 
+    @Transactional
     @Override
     public Boolean delete(Long shopid, Long userid) throws ResourceNotFoundException {
 

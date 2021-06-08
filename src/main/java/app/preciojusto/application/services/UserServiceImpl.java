@@ -6,7 +6,6 @@ import app.preciojusto.application.dto.UserRequestDTO;
 import app.preciojusto.application.entities.User;
 import app.preciojusto.application.entities.UserImage;
 import app.preciojusto.application.exceptions.*;
-import app.preciojusto.application.repositories.UserImageRepository;
 import app.preciojusto.application.repositories.UserRepository;
 import app.preciojusto.application.utils.HashUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +47,7 @@ public class UserServiceImpl implements UserService {
         LoginResponseDTO result = new LoginResponseDTO();
         this.userRepository.findUserByUseremailEquals(requestUser.getUseremail()).ifPresentOrElse(
                 (User user) -> {
+                    if (!user.getUsernative() || !user.isUseractive()) throw new WrongCredentialsException(ApplicationExceptionCode.USER_LOGINMETHOD_ERROR);
                     String storedPassword = user.getUserpass();
                     boolean status;
                     try {
@@ -71,16 +71,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(UserRequestDTO request) throws InvalidKeySpecException, NoSuchAlgorithmException {
         User user = new User();
-        String generatedSecuredPassword = HashUtil.generatePasswordHash(request.getUserpass());
         user.setUsername(request.getUsername());
         user.setUsersurname(request.getUsersurname());
         user.setUseremail(request.getUseremail());
         user.setUserImage(null);
-        user.setUsernative(true); //Check in the future if it is user native or not
+        user.setUsernative(request.getUsernative());
         user.setUseractive(true);
         user.setUserphonenumber(null);
-        user.setUsergender(request.getUsergender());
-        user.setUserpass(generatedSecuredPassword);
+        user.setUsergender(null);
+
+        if (request.getUsernative()) {
+            String generatedSecuredPassword = HashUtil.generatePasswordHash(request.getUserpass());
+            user.setUserpass(generatedSecuredPassword);
+        }
 
         try {
             return this.userRepository.save(user);
@@ -95,6 +98,10 @@ public class UserServiceImpl implements UserService {
 
         User user = this.findById(request.getUserid())
                 .orElseThrow(() -> new ResourceNotFoundException(ApplicationExceptionCode.USER_NOT_FOUND_ERROR));
+
+        String storedPassword = user.getUserpass();
+        boolean canEdit = HashUtil.validatePassword(request.getOlduserpass(), storedPassword);
+        if (!canEdit) throw new WrongCredentialsException(ApplicationExceptionCode.WRONG_PASSWORD_ERROR);
 
         if (request.getUserImage() != null) {
 
@@ -112,11 +119,13 @@ public class UserServiceImpl implements UserService {
             String generatedSecuredPassword = HashUtil.generatePasswordHash(request.getUserpass());
             user.setUserpass(generatedSecuredPassword);
         }
+
         user.setUsername(request.getUsername());
         user.setUsersurname(request.getUsersurname());
         user.setUseremail(request.getUseremail());
-        user.setUserphonenumber(request.getUserphonenumber());
-        user.setUsergender(request.getUsergender());
+
+        if (request.getUserphonenumber() != null) user.setUserphonenumber(request.getUserphonenumber());
+        if (request.getUsergender() != null) user.setUsergender(request.getUsergender());
 
         try {
             return this.userRepository.save(user);
@@ -146,8 +155,6 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException(ApplicationExceptionCode.EMAILEXISTS_VALIDATION_ERROR);
         if (!this.isUsernameValid(request.getUsername()))
             throw new ValidationException(ApplicationExceptionCode.USER_VALIDATION_ERROR);
-        if (!this.isPhoneNumberValid(request.getUserphonenumber()))
-            throw new ValidationException(ApplicationExceptionCode.PHONENUMBER_VALIDATION_ERROR);
         if (!this.isPasswordValid(request.getUserpass()))
             throw new ValidationException(ApplicationExceptionCode.PASSWORD_VALIDATION_ERROR);
         if (!request.getUserpass().equals(request.getRepeatuserpass()))
@@ -169,11 +176,11 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException(ApplicationExceptionCode.EMAILEXISTS_VALIDATION_ERROR);
         if (!this.isUsernameValid(request.getUsername()))
             throw new ValidationException(ApplicationExceptionCode.USER_VALIDATION_ERROR);
-        if (!this.isPhoneNumberValid(request.getUserphonenumber()))
+        if (request.getUserphonenumber() != null && !this.isPhoneNumberValid(request.getUserphonenumber()))
             throw new ValidationException(ApplicationExceptionCode.PHONENUMBER_VALIDATION_ERROR);
-        if (!this.isPasswordValid(request.getUserpass()))
+        if (request.getUserpass() != null && !this.isPasswordValid(request.getUserpass()))
             throw new ValidationException(ApplicationExceptionCode.PASSWORD_VALIDATION_ERROR);
-        if (!request.getUserpass().equals(request.getRepeatuserpass()))
+        if (request.getUserpass() != null && request.getRepeatuserpass() != null && !request.getUserpass().equals(request.getRepeatuserpass()))
             throw new ValidationException(ApplicationExceptionCode.SAMEPASSWORD_VALIDATION_ERROR);
     }
 

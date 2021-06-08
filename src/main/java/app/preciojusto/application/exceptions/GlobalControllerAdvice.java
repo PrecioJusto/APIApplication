@@ -50,6 +50,12 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
+    @ExceptionHandler(OAuthServiceException.class)
+    public ResponseEntity<?> handleOAuthServiceException(OAuthServiceException ex) {
+        ExceptionResponse response = new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, Integer.parseInt(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException() {
         ApplicationExceptionCode applicationExceptionCode = ApplicationExceptionCode.UNKNOWN_ERROR;

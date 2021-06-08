@@ -10,6 +10,7 @@ import app.preciojusto.application.exceptions.ResourceNotFoundException;
 import app.preciojusto.application.repositories.ShoppingCartProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class ShoppingCartProductServiceImpl implements ShoppingCartProductServic
         return this.shoppingCartProductRepository.findAllByShoppingCart_Shopid(shopid);
     }
 
+    @Transactional
     @Override
     public ShoppingCartProduct add(ShoppingCartProductRequestDTO request) {
         if (this.findById(new ShoppingCartProductCK(request.getProdid(), request.getShopid())).isPresent())
@@ -68,6 +70,7 @@ public class ShoppingCartProductServiceImpl implements ShoppingCartProductServic
         }
     }
 
+    @Transactional
     @Override
     public ShoppingCartProduct update(ShoppingCartProductRequestDTO request) throws ResourceNotFoundException {
         ShoppingCartProduct shoppingCartProduct = this.findById(new ShoppingCartProductCK(request.getProdid(), request.getShopid()))
@@ -81,6 +84,7 @@ public class ShoppingCartProductServiceImpl implements ShoppingCartProductServic
         }
     }
 
+    @Transactional
     @Override
     public Boolean delete(Long productId, Long shoppingCartId) {
         try {

@@ -25,13 +25,13 @@ public class User {
     @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String usersurname;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "usergender", nullable = false)
+    @Column(name = "usergender")
     private UserGender usergender;
 
-    @Column(nullable = false)
     @JsonIgnore
     private String userpass;
 
@@ -48,12 +48,13 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private UserImage userImage;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<ShoppingCart> shoppingCarts;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Product> products;
 }
