@@ -32,7 +32,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         try {
             String token = header.replace("Bearer ", "");
             Map<String, Claim> claimUser = tokenService.getSubject(token);
-            request.setAttribute("user", claimUser);
+            request.setAttribute("userToken", claimUser);
         } catch (Exception e) {
             response.sendError(
                     HttpServletResponse.SC_UNAUTHORIZED,

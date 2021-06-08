@@ -20,28 +20,28 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/favourite")
-    public List<ProductResponseDTO> getFavouriteProducts(@RequestAttribute Map<String, Claim> user) throws Exception {
-        Long userid = user.get("userid").asLong();
+    public List<ProductResponseDTO> getFavouriteProducts(@RequestAttribute Map<String, Claim> userToken) throws Exception {
+        Long userid = userToken.get("userid").asLong();
         if (userid == null) throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
         return this.productService.getFavouriteProducts(userid);
     }
 
     @PostMapping("/favourite")
-    public Product postAddFavouriteProduct(@RequestAttribute Map<String, Claim> user, @RequestBody ProductRequestDTO request) {
+    public Product postAddFavouriteProduct(@RequestAttribute Map<String, Claim> userToken, @RequestBody ProductRequestDTO request) {
         if (request.getProdid() == null || request.getUseridfavourite() == null)
             throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
 
-        if (!request.getUseridfavourite().equals(user.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
+        if (!request.getUseridfavourite().equals(userToken.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
 
         return this.productService.addAsFavourite(request);
     }
 
     @DeleteMapping("/favourite/{userid}/{prodid}")
-    public Boolean deleteFavouriteProduct(@PathVariable Long userid, @PathVariable Long prodid, @RequestAttribute Map<String, Claim> user) {
+    public Boolean deleteFavouriteProduct(@PathVariable Long userid, @PathVariable Long prodid, @RequestAttribute Map<String, Claim> userToken) {
         if (userid == null || prodid == null)
             throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
 
-        if (!userid.equals(user.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
+        if (!userid.equals(userToken.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
         return this.productService.deleteFavourite(userid, prodid);
     }
 }

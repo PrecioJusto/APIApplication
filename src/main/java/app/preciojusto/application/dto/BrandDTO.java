@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class BrandDTO {
-    private Long brandid;
+    private Long branid;
     private String branname;
 }

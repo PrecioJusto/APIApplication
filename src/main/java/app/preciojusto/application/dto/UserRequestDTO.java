@@ -22,6 +22,8 @@ public class UserRequestDTO {
 
     private UserGender usergender;
 
+    private String olduserpass;
+
     private String userpass;
 
     private String repeatuserpass;
@@ -31,5 +33,7 @@ public class UserRequestDTO {
     private String userphonenumber;
 
     private String userImage;
+
+    private Boolean usernative;
 
 }

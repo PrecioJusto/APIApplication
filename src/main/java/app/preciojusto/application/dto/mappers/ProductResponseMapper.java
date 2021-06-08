@@ -42,10 +42,22 @@ public class ProductResponseMapper {
     }
 
     public BrandDTO mapperBrandDTO(String brand) {
-        Map<String, Object> brandMap = new Gson().fromJson(brand, HashMap.class);
+        Long branid = getBranidFromString(brand);
+        String branname = getBrannameFromString(brand);
+
         BrandDTO brandDTO = new BrandDTO();
-        brandDTO.setBrandid((long) Double.parseDouble(brandMap.get("branid").toString()));
-        brandDTO.setBranname(brandMap.get("branname").toString());
+        brandDTO.setBranid(branid);
+        brandDTO.setBranname(branname);
         return brandDTO;
+    }
+
+    private Long getBranidFromString(String brand) {
+        return (long) Double.parseDouble(brand.split("=")[1].split(",")[0]);
+    }
+
+    private String getBrannameFromString(String brand) {
+        StringBuilder sb = new StringBuilder(brand);
+        String brandParsed = sb.deleteCharAt(brand.length() - 1).toString();
+        return brandParsed.split("=")[2];
     }
 }

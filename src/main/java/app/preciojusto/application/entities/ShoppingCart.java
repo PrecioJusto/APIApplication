@@ -35,7 +35,7 @@ public class ShoppingCart {
     private User user;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     Set<ShoppingCartProduct> shoppingCartProducts;
 
 }

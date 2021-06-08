@@ -25,6 +25,6 @@ public class Product {
     private Set<User> users;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     Set<ShoppingCartProduct> shoppingCartProducts;
 }
