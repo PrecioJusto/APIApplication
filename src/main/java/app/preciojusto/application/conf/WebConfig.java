@@ -10,14 +10,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
-    TokenInterceptor tokenInterceptor;
+    private TokenInterceptor tokenInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/profile",
-                        "/shoppingcarts", "/shoppingcart", "/shoppingcart/*",
-                        "/shoppingcartproduct", "/shoppingcartproduct/*/*",
-                        "/favourite", "/favourite/*/*");
+                .addPathPatterns("/api/profile",
+                        "/api/shoppingcarts", "/api/shoppingcart", "/api/shoppingcart/*",
+                        "/api/shoppingcartproduct", "/api/shoppingcartproduct/*/*",
+                        "/api/favourite", "/api/favourite/*/*")
+                .excludePathPatterns("/api/login", "/api/register");
     }
 }

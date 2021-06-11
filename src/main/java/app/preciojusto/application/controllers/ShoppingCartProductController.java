@@ -28,7 +28,7 @@ public class ShoppingCartProductController {
     @Autowired
     private ShoppingCartService shoppingCartService;
 
-    @PostMapping("/shoppingcartproduct")
+    @PostMapping("/api/shoppingcartproduct")
     public ShoppingCartProduct postAddShoppingCartProduct(@RequestBody ShoppingCartProductRequestDTO request, @RequestAttribute Map<String, Claim> userToken) throws ResourceNotFoundException {
         checkBadRequest(request);
 
@@ -40,7 +40,7 @@ public class ShoppingCartProductController {
         return this.shoppingCartProductService.add(request);
     }
 
-    @PutMapping("/shoppingcartproduct")
+    @PutMapping("/api/shoppingcartproduct")
     public ShoppingCartProduct putUpdateShoppingCartProduct(@RequestBody ShoppingCartProductRequestDTO request, @RequestAttribute Map<String, Claim> userToken) throws ResourceNotFoundException {
         checkBadRequest(request);
 
@@ -52,7 +52,7 @@ public class ShoppingCartProductController {
         return this.shoppingCartProductService.update(request);
     }
 
-    @DeleteMapping("/shoppingcartproduct/{productId}/{shoppingCartId}")
+    @DeleteMapping("/api/shoppingcartproduct/{productId}/{shoppingCartId}")
     public Boolean deleteShoppingCartProduct(@PathVariable Long productId, @PathVariable Long shoppingCartId, @RequestAttribute Map<String, Claim> userToken) throws ResourceNotFoundException {
         ShoppingCart shoppingCart = this.shoppingCartService.findByShopid(shoppingCartId)
                 .orElseThrow(() -> new ResourceNotFoundException(ApplicationExceptionCode.SHOPPINGCART_NOT_FOUND_ERROR));

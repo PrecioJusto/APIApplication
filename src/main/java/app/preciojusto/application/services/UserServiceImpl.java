@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException(ApplicationExceptionCode.USER_VALIDATION_ERROR);
         if (!this.isPasswordValid(request.getUserpass()))
             throw new ValidationException(ApplicationExceptionCode.PASSWORD_VALIDATION_ERROR);
-        if (!request.getUserpass().equals(request.getRepeatuserpass()))
+        if (!request.getUserpass().equals(request.getUserpassrepeat()))
             throw new ValidationException(ApplicationExceptionCode.SAMEPASSWORD_VALIDATION_ERROR);
     }
 
@@ -180,13 +180,13 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException(ApplicationExceptionCode.PHONENUMBER_VALIDATION_ERROR);
         if (request.getUserpass() != null && !this.isPasswordValid(request.getUserpass()))
             throw new ValidationException(ApplicationExceptionCode.PASSWORD_VALIDATION_ERROR);
-        if (request.getUserpass() != null && request.getRepeatuserpass() != null && !request.getUserpass().equals(request.getRepeatuserpass()))
+        if (request.getUserpass() != null && request.getUserpassrepeat() != null && !request.getUserpass().equals(request.getUserpassrepeat()))
             throw new ValidationException(ApplicationExceptionCode.SAMEPASSWORD_VALIDATION_ERROR);
     }
 
 
     private Boolean isPasswordValid(String password) {
-        Pattern passPattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@?#$%^&+=])(?=\\S+$).{8,}$");
+        Pattern passPattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@?#$%^&+=])(?=\\S+$).{8,20}$");
         Matcher passMatcher = passPattern.matcher(password);
         return passMatcher.find();
     }

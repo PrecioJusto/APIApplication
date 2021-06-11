@@ -19,14 +19,14 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/favourite")
+    @GetMapping("/api/favourite")
     public List<ProductResponseDTO> getFavouriteProducts(@RequestAttribute Map<String, Claim> userToken) throws Exception {
         Long userid = userToken.get("userid").asLong();
         if (userid == null) throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
         return this.productService.getFavouriteProducts(userid);
     }
 
-    @PostMapping("/favourite")
+    @PostMapping("/api/favourite")
     public Product postAddFavouriteProduct(@RequestAttribute Map<String, Claim> userToken, @RequestBody ProductRequestDTO request) {
         if (request.getProdid() == null || request.getUseridfavourite() == null)
             throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
@@ -36,7 +36,7 @@ public class ProductController {
         return this.productService.addAsFavourite(request);
     }
 
-    @DeleteMapping("/favourite/{userid}/{prodid}")
+    @DeleteMapping("/api/favourite/{userid}/{prodid}")
     public Boolean deleteFavouriteProduct(@PathVariable Long userid, @PathVariable Long prodid, @RequestAttribute Map<String, Claim> userToken) {
         if (userid == null || prodid == null)
             throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);

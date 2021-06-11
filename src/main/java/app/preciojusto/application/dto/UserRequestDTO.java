@@ -26,7 +26,7 @@ public class UserRequestDTO {
 
     private String userpass;
 
-    private String repeatuserpass;
+    private String userpassrepeat;
 
     private String useremail;
 

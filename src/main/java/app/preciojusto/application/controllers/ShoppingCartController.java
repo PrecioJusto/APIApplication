@@ -21,21 +21,21 @@ public class ShoppingCartController {
     @Autowired
     private ShoppingCartService shoppingCartService;
 
-    @GetMapping("/shoppingcarts")
+    @GetMapping("/api/shoppingcarts")
     public List<ShoppingCart> getShoppingCartsByUser(@RequestAttribute Map<String, Claim> userToken) {
 
         //if (!id.equals(user.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
         return this.shoppingCartService.findShoppingCartsByUser(userToken.get("userid").asLong());
     }
 
-    @GetMapping("/shoppingcart/{id}")
+    @GetMapping("/api/shoppingcart/{id}")
     public ShoppingCartResponseDTO getShoppingCart(@PathVariable Long id, @RequestAttribute Map<String, Claim> userToken) throws Exception {
         ShoppingCartResponseDTO shoppingCart = this.shoppingCartService.findByShopidDTO(id);
         if (!shoppingCart.getUser().getUserid().equals(userToken.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
         return shoppingCart;
     }
 
-    @PostMapping("/shoppingcart")
+    @PostMapping("/api/shoppingcart")
     public ShoppingCart postAddShoppingCart(@RequestBody ShoppingCartRequestDTO request, @RequestAttribute Map<String, Claim> userToken) throws ResourceNotFoundException {
 
         if (!request.getUserid().equals(userToken.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
@@ -45,7 +45,7 @@ public class ShoppingCartController {
         return this.shoppingCartService.saveShoppingCart(request);
     }
 
-    @PutMapping("/shoppingcart")
+    @PutMapping("/api/shoppingcart")
     public ShoppingCart putUpdateShoppingCart(@RequestBody ShoppingCartRequestDTO request, @RequestAttribute Map<String, Claim> userToken) throws ResourceNotFoundException {
 
         if (!request.getUserid().equals(userToken.get("userid").asLong())) throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
@@ -56,7 +56,7 @@ public class ShoppingCartController {
         return this.shoppingCartService.saveShoppingCart(request);
     }
 
-    @DeleteMapping("/shoppingcart/{id}")
+    @DeleteMapping("/api/shoppingcart/{id}")
     public Boolean deleteShoppingCart(@PathVariable Long id, @RequestAttribute Map<String, Claim> userToken) throws ResourceNotFoundException {
         return this.shoppingCartService.delete(id, userToken.get("userid").asLong());
     }

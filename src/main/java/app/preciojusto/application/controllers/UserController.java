@@ -37,7 +37,7 @@ public class UserController {
     @Autowired
     private FacebookService facebookService;
 
-    @GetMapping("/profile")
+    @GetMapping("/api/profile")
     public UserResponseDTO getProfile(@RequestAttribute Map<String, Claim> userToken) throws ResourceNotFoundException {
         String email = userToken.get("useremail").asString();
         User user = this.userService.findUserByEmail(email)
@@ -45,11 +45,11 @@ public class UserController {
         return UserMapper.INSTANCE.userToUserResponseDto(user);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/api/register")
     public User postAddUser(@RequestBody UserRequestDTO request) throws InvalidKeySpecException, NoSuchAlgorithmException, ResourceNotFoundException {
         if (request.getUsername() == null || request.getUseremail() == null ||
                 request.getUserpass() == null || request.getUserid() != null ||
-                request.getUsersurname() == null || request.getRepeatuserpass() == null)
+                request.getUsersurname() == null || request.getUserpassrepeat() == null)
             throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
 
         //Validate data before create the user
@@ -58,7 +58,7 @@ public class UserController {
         return this.userService.createUser(request);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public LoginResponseDTO login(@RequestBody LoginRequestDTO userToLogin) throws Exception {
 
         if (userToLogin.getUseremail() == null || userToLogin.getUserpass() == null)
@@ -67,7 +67,7 @@ public class UserController {
         return this.userService.loginUser(userToLogin);
     }
 
-    @PutMapping("/profile")
+    @PutMapping("/api/profile")
     public User putUpdateUser(@RequestBody UserRequestDTO request, @RequestAttribute Map<String, Claim> userToken) throws InvalidKeySpecException, NoSuchAlgorithmException, ResourceNotFoundException {
 
         if (!userToken.get("userid").asLong().equals(request.getUserid()))
@@ -86,13 +86,13 @@ public class UserController {
 
     //OAuth Services
 
-    @GetMapping("/loginGoogle")
+    @GetMapping("/api/loginGoogle")
     public RedirectView loginGoogle() throws Exception {
         URL url = this.googleService.getGoogleRedirectURL();
         return new RedirectView(url.toString());
     }
 
-    @GetMapping("/auth/google/oauth2callback/")
+    @GetMapping("/api/auth/google/oauth2callback/")
     public LoginResponseDTO oauthCallback(@RequestParam String code) {
 
         try {
@@ -122,7 +122,7 @@ public class UserController {
                 userRequestDTO.setUsersurname(family_name);
                 userRequestDTO.setUserImage(null);
                 userRequestDTO.setUserphonenumber(null);
-                userRequestDTO.setRepeatuserpass(null);
+                userRequestDTO.setUserpassrepeat(null);
                 user = this.userService.createUser(userRequestDTO);
                 token = this.tokenService.generateNewToken(user);
             }
@@ -134,14 +134,14 @@ public class UserController {
         }
     }
 
-    @GetMapping("/loginTwitter")
+    @GetMapping("/api/loginTwitter")
     public RedirectView loginTwitter() {
         Map<String, String> requestToken = this.twitterService.getRequestToken();
         URL url = this.twitterService.getUrlRedirectTwitter(requestToken.get("oauth_token"));
         return new RedirectView(url.toString());
     }
 
-    @GetMapping("/auth/twitter/oauth2callback/")
+    @GetMapping("/api/auth/twitter/oauth2callback/")
     public LoginResponseDTO twitterAuthCallback(@RequestParam String oauth_token, @RequestParam String oauth_verifier) {
 
         try {
@@ -170,7 +170,7 @@ public class UserController {
                 userRequestDTO.setUsersurname(null);
                 userRequestDTO.setUserImage(null);
                 userRequestDTO.setUserphonenumber(null);
-                userRequestDTO.setRepeatuserpass(null);
+                userRequestDTO.setUserpassrepeat(null);
                 user = this.userService.createUser(userRequestDTO);
                 token = this.tokenService.generateNewToken(user);
             }
@@ -182,13 +182,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("/loginFacebook")
+    @GetMapping("/api/loginFacebook")
     public RedirectView loginFacebook() throws Exception {
         URL url = this.facebookService.getFacebookURL();
         return new RedirectView(url.toString());
     }
 
-    @GetMapping("/auth/facebook/oauth2callback/")
+    @GetMapping("/api/auth/facebook/oauth2callback/")
     public LoginResponseDTO facebookAuthCallback(@RequestParam String code) {
         try {
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
@@ -196,6 +196,9 @@ public class UserController {
             Map<String, Object> facebookData = facebookService.getData(accessToken);
             String emailFacebookAccount = (String) facebookData.get("email");
             String usernameFacebookAccount = (String) facebookData.get("name");
+
+            System.out.println("email: " + emailFacebookAccount);
+            System.out.println("username: " + usernameFacebookAccount);
 
             if (emailFacebookAccount == null || usernameFacebookAccount == null) throw new Exception();
             Optional<User> userExists = this.userService.findUserByEmail(emailFacebookAccount);
@@ -215,7 +218,7 @@ public class UserController {
                 userRequestDTO.setUsersurname(null);
                 userRequestDTO.setUserImage(null);
                 userRequestDTO.setUserphonenumber(null);
-                userRequestDTO.setRepeatuserpass(null);
+                userRequestDTO.setUserpassrepeat(null);
                 user = this.userService.createUser(userRequestDTO);
                 token = this.tokenService.generateNewToken(user);
             }

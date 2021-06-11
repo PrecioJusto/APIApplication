@@ -14,7 +14,7 @@ public class UserImageController {
     @Autowired
     UserImageService imageService;
 
-    @GetMapping(value = "/images/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/api/images/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getUserImg(@PathVariable String name) throws ResourceNotFoundException {
         byte[] photo = imageService.findDataImageByName(name);
         String photoBase64String = new String(photo).split(",")[1];
