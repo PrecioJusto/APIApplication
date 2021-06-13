@@ -109,19 +109,11 @@ public class UserController {
 
     //OAuth Services
 
-    @GetMapping("/api/loginGoogle")
-    public RedirectView loginGoogle() throws Exception {
-        URL url = this.googleService.getGoogleRedirectURL();
-        return new RedirectView(url.toString());
-    }
-
-    @GetMapping("/api/auth/google/oauth2callback/")
-    public LoginResponseDTO oauthCallback(@RequestParam String code) {
-
+    @GetMapping("/api/usergoogle/{access_token}")
+    public LoginResponseDTO getUserFromAccessToken(@PathVariable String access_token) {
         try {
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-            String accessToken = this.googleService.getAccessToken(code);
-            Map<String, String> userDetails = this.googleService.getUserDetails(accessToken);
+            Map<String, String> userDetails = this.googleService.getUserDetails(access_token);
             String emailGoogleAccount = userDetails.get("email");
             String username = userDetails.get("given_name");
             String family_name = userDetails.get("family_name");

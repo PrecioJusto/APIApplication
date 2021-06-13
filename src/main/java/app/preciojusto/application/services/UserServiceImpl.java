@@ -47,7 +47,9 @@ public class UserServiceImpl implements UserService {
         LoginResponseDTO result = new LoginResponseDTO();
         this.userRepository.findUserByUseremailEquals(requestUser.getUseremail()).ifPresentOrElse(
                 (User user) -> {
-                    if (!user.getUsernative() || !user.isUseractive()) throw new WrongCredentialsException(ApplicationExceptionCode.USER_LOGINMETHOD_ERROR);
+                    if (!user.getUsernative()) throw new WrongCredentialsException(ApplicationExceptionCode.USER_NATIVE_ERROR);
+                    if (!user.isUseractive()) throw new WrongCredentialsException(ApplicationExceptionCode.USER_INACTIVE_ERROR);
+
                     String storedPassword = user.getUserpass();
                     boolean status;
                     try {
