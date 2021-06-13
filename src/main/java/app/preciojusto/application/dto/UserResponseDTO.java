@@ -26,5 +26,5 @@ public class UserResponseDTO {
     private String useremail;
     private String userphonenumber;
     private UserImage userImage;
-
+    private Boolean usernative;
 }

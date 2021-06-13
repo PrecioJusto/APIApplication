@@ -3,8 +3,10 @@ package app.preciojusto.application.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.bytebuddy.implementation.bind.annotation.Super;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +18,5 @@ public class ProductResponseDTO {
     private Long prodviews;
     private BrandDTO brand;
     private CategoryDTO category;
+    private List<SupermarketProductDTO> supermarketProducts;
 }
