@@ -27,7 +27,6 @@ public class ProductResponseMapper {
     }
 
     public ProductResponseDTO mapper(Map<String, Object> map) {
-        System.out.println(map.toString());
         ProductResponseDTO productResponseDTO = new ProductResponseDTO();
         productResponseDTO.setProdid((long) Double.parseDouble(map.get("prodid").toString()));
         productResponseDTO.setProdname(map.get("prodname").toString());
@@ -60,9 +59,7 @@ public class ProductResponseMapper {
         List<SupermarketProductDTO> supermarketProductDTOList = new ArrayList<>();
 
         supermarketProductsMap.forEach(sp -> {
-            //List<Map<String, Object>> aaa = new Gson().fromJson(new Gson().toJson(sp.get("supeid")), ArrayList.class);
             String supermarketName = getSupernameFromString(sp.get("supeid").toString());
-            System.out.println(supermarketName);
             String image = null;
             if (sp.get("suprimg") != null) image = sp.get("suprimg").toString();
             supermarketProductDTOList.add(new SupermarketProductDTO((int) Double.parseDouble(sp.get("suprprice").toString()), image, supermarketName));
