@@ -30,12 +30,18 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public List<ProductResponseDTO> getProducts(List<Long> ids) throws Exception {
-        String json = new Gson().toJson(ids);
+
+        List<Long> test = new ArrayList<>();
+
+        for (long i = 1; i < 19995; i++) {
+            test.add(i);
+        }
+
+        String json = new Gson().toJson(test);
         String urlString = endpoint + "/products/idslist";
         URL url = new URL(urlString);
         String resp = doPost(url, json);
         List<Map<String, Object>> maps = new Gson().fromJson(resp, ArrayList.class);
-
         return this.productResponseMapper.mapperList(maps);
     }
 
