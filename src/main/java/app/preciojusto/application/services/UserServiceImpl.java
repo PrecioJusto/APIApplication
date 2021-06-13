@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
             user.setUserImage(this.userImageService.save(newImage));
         }
 
-        if (request.getUserpass() != null) {
+        if (request.getUserpass() != null && request.getUserpassrepeat() != null && request.getOlduserpass() != null) {
             String generatedSecuredPassword = HashUtil.generatePasswordHash(request.getUserpass());
             user.setUserpass(generatedSecuredPassword);
         }
@@ -129,6 +129,37 @@ public class UserServiceImpl implements UserService {
         if (request.getUserphonenumber() != null) user.setUserphonenumber(request.getUserphonenumber());
         if (request.getUsergender() != null) user.setUsergender(request.getUsergender());
 
+        try {
+            return this.userRepository.save(user);
+        } catch (Exception e) {
+            throw new ResourceAlreadyExistsException(ApplicationExceptionCode.USER_ALREADY_EXISTS_ERROR);
+        }
+    }
+
+    @Override
+    public User updateUserOAuth(UserRequestDTO request) {
+        Charset charset = StandardCharsets.US_ASCII;
+
+        User user = this.findById(request.getUserid())
+                .orElseThrow(() -> new ResourceNotFoundException(ApplicationExceptionCode.USER_NOT_FOUND_ERROR));
+
+        if (request.getUserImage() != null) {
+
+            if (user.getUserImage() != null) {
+                this.userImageService.delete(user.getUserImage().getUsimid());
+            }
+            UserImage newImage = new UserImage();
+            newImage.setUsimname(generateAlphanumericString());
+            newImage.setUsimimage(charset.encode(String.valueOf(request.getUserImage())).array());
+            newImage.setUser(user);
+            user.setUserImage(this.userImageService.save(newImage));
+        }
+
+        user.setUsername(request.getUsername());
+        user.setUsersurname(request.getUsersurname());
+
+        if (request.getUserphonenumber() != null) user.setUserphonenumber(request.getUserphonenumber());
+        if (request.getUsergender() != null) user.setUsergender(request.getUsergender());
         try {
             return this.userRepository.save(user);
         } catch (Exception e) {
@@ -172,7 +203,7 @@ public class UserServiceImpl implements UserService {
             requestedEmail = requestedUser.get().getUseremail();
         }
 
-        if (!this.isEmailValid(request.getUseremail()))
+        if ( !this.isEmailValid(request.getUseremail()))
             throw new ValidationException(ApplicationExceptionCode.EMAIL_VALIDATION_ERROR);
         if (this.userRepository.findUserByUseremailEquals(request.getUseremail()).isPresent() && !requestedEmail.equals(emailAuth))
             throw new ValidationException(ApplicationExceptionCode.EMAILEXISTS_VALIDATION_ERROR);
@@ -184,6 +215,19 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException(ApplicationExceptionCode.PASSWORD_VALIDATION_ERROR);
         if (request.getUserpass() != null && request.getUserpassrepeat() != null && !request.getUserpass().equals(request.getUserpassrepeat()))
             throw new ValidationException(ApplicationExceptionCode.SAMEPASSWORD_VALIDATION_ERROR);
+    }
+
+    @Override
+    public void checkUpdateProfileOAuth(UserRequestDTO request) {
+        Optional<User> requestedUser = this.userRepository.findById(request.getUserid());
+        if (requestedUser.isPresent()) {
+            if (!this.isUsernameValid(request.getUsername()))
+                throw new ValidationException(ApplicationExceptionCode.USER_VALIDATION_ERROR);
+            if (request.getUserphonenumber() != null && !this.isPhoneNumberValid(request.getUserphonenumber()))
+                throw new ValidationException(ApplicationExceptionCode.PHONENUMBER_VALIDATION_ERROR);
+        } else {
+            throw new ResourceNotFoundException(ApplicationExceptionCode.USER_NOT_FOUND_ERROR);
+        }
     }
 
 

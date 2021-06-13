@@ -16,7 +16,11 @@ public interface UserService {
     Optional<User> findUserByEmail(String email);
     User createUser(UserRequestDTO user) throws InvalidKeySpecException, NoSuchAlgorithmException;
     User updateUser(UserRequestDTO user) throws ResourceNotFoundException, InvalidKeySpecException, NoSuchAlgorithmException;
+
+    User updateUserOAuth(UserRequestDTO user);
     User disableUser(UserRequestDTO user) throws ResourceNotFoundException;
     void checkRegister(UserRequestDTO request) throws ResourceNotFoundException;
     void checkUpdateProfile(UserRequestDTO request, String emailAuth);
+
+    void checkUpdateProfileOAuth(UserRequestDTO request);
 }

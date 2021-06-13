@@ -68,20 +68,43 @@ public class UserController {
     }
 
     @PutMapping("/api/profile")
-    public User putUpdateUser(@RequestBody UserRequestDTO request, @RequestAttribute Map<String, Claim> userToken) throws InvalidKeySpecException, NoSuchAlgorithmException, ResourceNotFoundException {
+    public LoginResponseDTO putUpdateUser(@RequestBody UserRequestDTO request, @RequestAttribute Map<String, Claim> userToken) throws InvalidKeySpecException, NoSuchAlgorithmException, ResourceNotFoundException {
 
         if (!userToken.get("userid").asLong().equals(request.getUserid()))
             throw new UnauthorizedException(ApplicationExceptionCode.UNAUTHORIZED_ERROR);
 
-        if (request.getUsername() == null || request.getUserid() == null ||
+        User userRequested = this.userService.findById(userToken.get("userid").asLong())
+                .orElseThrow(() -> new ResourceNotFoundException(ApplicationExceptionCode.USER_NOT_FOUND_ERROR));
+
+        if (userRequested.getUsernative() && (request.getUsername() == null || request.getUserid() == null ||
                 request.getUseremail() == null || request.getOlduserpass() == null ||
-                request.getUsersurname() == null && request.getUsernative() != null)
+                request.getUsersurname() == null || request.getUsernative() != null))
+            throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
+
+
+        if (!userRequested.getUsernative() && (request.getUsername() == null || request.getUsersurname() == null ||
+                request.getUserid() == null || request.getUsernative() != null))
             throw new BadRequestException(ApplicationExceptionCode.BADREQUEST_ERROR);
 
         //Validate data before update the user
-        this.userService.checkUpdateProfile(request, userToken.get("useremail").asString());
+        User userToReturn = null;
+        if (userRequested.getUsernative()) {
+            this.userService.checkUpdateProfile(request, userToken.get("useremail").asString());
+            userToReturn = this.userService.updateUser(request);
+        }
+        if (!userRequested.getUsernative()) {
+            this.userService.checkUpdateProfileOAuth(request);
+            userToReturn = this.userService.updateUserOAuth(request);
+        }
 
-        return this.userService.updateUser(request);
+        if (userToReturn != null) {
+            String token = this.tokenService.generateNewToken(userToReturn);
+            LoginResponseDTO result = new LoginResponseDTO();
+            result.setUser(userToReturn);
+            result.setToken(token);
+            return result;
+        }
+        throw new RuntimeException();
     }
 
     //OAuth Services

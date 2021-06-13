@@ -56,6 +56,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCartResponseDTO.setShopname(shoppingCart.getShopname());
         shoppingCartResponseDTO.setProducts(productsFromShoppingCart);
         shoppingCartResponseDTO.setUser(shoppingCart.getUser());
+        shoppingCartResponseDTO.setShopcreationdate(shoppingCart.getShopcreationdate());
         return shoppingCartResponseDTO;
     }
 
