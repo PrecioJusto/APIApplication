@@ -31,30 +31,12 @@ public class ProductResponseMapper {
         productResponseDTO.setProdid((long) Double.parseDouble(map.get("prodid").toString()));
         productResponseDTO.setProdname(map.get("prodname").toString());
         productResponseDTO.setProdviews((long) Double.parseDouble(map.get("prodviews").toString()));
-        productResponseDTO.setCategory(mapperCategoryDTO(map.get("category").toString()));
-        productResponseDTO.setBrand(mapperBrandDTO(map.get("brand").toString()));
+
+        productResponseDTO.setCategory(new Gson().fromJson(new Gson().toJson(map.get("category")), CategoryDTO.class));
+        productResponseDTO.setBrand(new Gson().fromJson(new Gson().toJson(map.get("brand")), BrandDTO.class));
         productResponseDTO.setSupermarketProducts(mapperSupermarketProducts(new Gson().fromJson(new Gson().toJson(map.get("supermarketProducts")), ArrayList.class)));
         return productResponseDTO;
     }
-
-    public CategoryDTO mapperCategoryDTO(String category) {
-        Map<String, Object> categoryMap = new Gson().fromJson(category, HashMap.class);
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setCateid((long) Double.parseDouble(categoryMap.get("cateid").toString()));
-        categoryDTO.setCatename(categoryMap.get("catename").toString());
-        return categoryDTO;
-    }
-
-    public BrandDTO mapperBrandDTO(String brand) {
-        Long branid = getBranidFromString(brand);
-        String branname = getBrannameFromString(brand);
-
-        BrandDTO brandDTO = new BrandDTO();
-        brandDTO.setBranid(branid);
-        brandDTO.setBranname(branname);
-        return brandDTO;
-    }
-
     public List<SupermarketProductDTO> mapperSupermarketProducts(List<Map<String, Object>> supermarketProductsMap) {
         List<SupermarketProductDTO> supermarketProductDTOList = new ArrayList<>();
 
@@ -65,16 +47,6 @@ public class ProductResponseMapper {
             supermarketProductDTOList.add(new SupermarketProductDTO((int) Double.parseDouble(sp.get("suprprice").toString()), image, supermarketName));
         });
         return supermarketProductDTOList;
-    }
-
-    private Long getBranidFromString(String brand) {
-        return (long) Double.parseDouble(brand.split("=")[1].split(",")[0]);
-    }
-
-    private String getBrannameFromString(String brand) {
-        StringBuilder sb = new StringBuilder(brand);
-        String brandParsed = sb.deleteCharAt(brand.length() - 1).toString();
-        return brandParsed.split("=")[2];
     }
 
     private String getSupernameFromString(String supeid) {
