@@ -213,9 +213,6 @@ public class UserController {
             String emailFacebookAccount = (String) facebookData.get("email");
             String usernameFacebookAccount = (String) facebookData.get("name");
 
-            System.out.println("email: " + emailFacebookAccount);
-            System.out.println("username: " + usernameFacebookAccount);
-
             if (emailFacebookAccount == null || usernameFacebookAccount == null) throw new Exception();
             Optional<User> userExists = this.userService.findUserByEmail(emailFacebookAccount);
 
