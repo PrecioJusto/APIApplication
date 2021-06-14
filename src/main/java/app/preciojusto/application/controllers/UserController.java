@@ -1,9 +1,6 @@
 package app.preciojusto.application.controllers;
 
-import app.preciojusto.application.dto.LoginRequestDTO;
-import app.preciojusto.application.dto.LoginResponseDTO;
-import app.preciojusto.application.dto.UserRequestDTO;
-import app.preciojusto.application.dto.UserResponseDTO;
+import app.preciojusto.application.dto.*;
 import app.preciojusto.application.dto.mappers.UserMapper;
 import app.preciojusto.application.entities.User;
 import app.preciojusto.application.exceptions.*;
@@ -156,12 +153,14 @@ public class UserController {
         return new RedirectView(url.toString());
     }
 
-    @GetMapping("/api/auth/twitter/oauth2callback/")
-    public LoginResponseDTO twitterAuthCallback(@RequestParam String oauth_token, @RequestParam String oauth_verifier) {
+    @PostMapping("/api/auth/twitter")
+    public LoginResponseDTO twitterAuthCallback(@RequestBody TwitterRequestDTO request) {
 
+        if (request.getOauth_token() == null || request.getOauth_verifier() == null)
+            throw new OAuthServiceException(ApplicationExceptionCode.TWITTER_SERVICE_ERROR);
         try {
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-            Map<String, String> accessTokenUser = twitterService.getAccessToken(oauth_token, oauth_verifier);
+            Map<String, String> accessTokenUser = twitterService.getAccessToken(request.getOauth_token(), request.getOauth_verifier());
             Map<String, Object> verify_credentials = twitterService.getAccountDetails(accessTokenUser.get("oauth_token"), accessTokenUser.get("oauth_token_secret"));
             String emailTwitterAccount = verify_credentials.get("email").toString();
             String username = verify_credentials.get("name").toString();
@@ -203,11 +202,13 @@ public class UserController {
         return new RedirectView(url.toString());
     }
 
-    @GetMapping("/api/auth/facebook/oauth2callback/")
-    public LoginResponseDTO facebookAuthCallback(@RequestParam String code) {
+    @PostMapping("/api/auth/facebook")
+    public LoginResponseDTO facebookAuthCallback(@RequestBody FacebookRequestDTO request) {
+
+        if (request.getCode() == null) throw new OAuthServiceException(ApplicationExceptionCode.FACEBOOK_SERVICE_ERRROR);
         try {
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-            String accessToken = facebookService.getAccessToken(code);
+            String accessToken = facebookService.getAccessToken(request.getCode());
             Map<String, Object> facebookData = facebookService.getData(accessToken);
             String emailFacebookAccount = (String) facebookData.get("email");
             String usernameFacebookAccount = (String) facebookData.get("name");
